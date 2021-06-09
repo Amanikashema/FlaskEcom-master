@@ -1,0 +1,15 @@
+-Functionality Breakdown for FlaskEcom App:
+
+1. Test if Register functionality actually register New Users into system
+   a. Enter all required information to register as anew user
+2. Test if Login Functionality actually login
+   a. Enter Valid login details (correct email and password)
+   b. Enter invalid login details (wrong email and password)
+3. Test if Logout Functionality actually logout
+   a. Check if a popup shows to confirm if user was logout
+4. Test Buying Product functionality
+   a. Check if products are added to bought section
+   b. Check if amount is deducted when an item is bought
+5. Test removing a bought item
+   a. Check if an item bought is removed from the bought section
+   b. Check if Total amount increases
