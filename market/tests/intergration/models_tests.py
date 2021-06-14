@@ -57,13 +57,19 @@ class TestProperties(BaseTest):
         self.assertEqual(budget_variable.prettier_budget, '3,000$')
 
     def test_password(self):
-        password_variable = User(email_address='amanikashema@gmail.com', password_hash="kash123", username='Amani', budget=3000)
-        self.assertEqual(password_variable.password_hash,"kash123" )
+        # testing password getter method
+        user = User(email_address='amanikashema@gmail.com', password_hash="kash123", username='Amani', budget=3000)
+        password = user.password
+        self.assertEqual(password, user.password_hash)
 
     # password correctness test
     def test_password_correction(self):
-        password = '123world'
-        pw_hash = bcrypt.generate_password_hash(password)
+        user = User(email_address='amanikashema@gmail.com', password_hash="kash123", username='Amani', budget=3000)
+        pw_hash = User.check_password_correction()
+
+        # register user with password 'password123'
+        # check that password_hash != 'password123'
+        # check that user.checkpasswordcorrection('password123') is true
 
         candidate = 'world'
         bcrypt.check_password_hash(pw_hash, candidate)
@@ -76,13 +82,13 @@ class TestProperties(BaseTest):
         self.assertTrue(purchase)
 
     # Test if item can be sold
-    #def test_sell(self):
+    def test_sell(self):
         item_info = Item(id=1, name='IPHONE', price=2000, barcode='12345', description='brown product', owner=1)
         purchase_info = User(id = 1, email_address='amanikashema@gmail.comu', password_hash="kash123", username='Amani',
                              budget=3000).can_sell(item_info)
 
 
-        #self.assertIn(purchase_info.username,item_obj)
+        self.assertIn(purchase_info.username,item_info)
         #item_obj in self.items
 
 
