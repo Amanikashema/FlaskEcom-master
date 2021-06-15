@@ -64,16 +64,12 @@ class TestProperties(BaseTest):
 
     # password correctness test
     def test_password_correction(self):
-        user = User(email_address='amanikashema@gmail.com', password_hash="kash123", username='Amani', budget=3000)
-        pw_hash = User.check_password_correction()
-
-        # register user with password 'password123'
-        # check that password_hash != 'password123'
-        # check that user.checkpasswordcorrection('password123') is true
+        password = 'frank'
+        pw_hash = bcrypt.generate_password_hash(password)
 
         candidate = 'world'
-        bcrypt.check_password_hash(pw_hash, candidate)
-        self.assertFalse(bcrypt.check_password_hash(pw_hash, candidate))
+        user = bcrypt.check_password_hash(pw_hash, candidate)
+        self.assertFalse(user)
 
     # Test if customer can buy products
     def test_purchase(self):
@@ -82,21 +78,31 @@ class TestProperties(BaseTest):
         self.assertTrue(purchase)
 
     # Test if item can be sold
-    def test_sell(self):
+    def test_sell_method(self):
         item_info = Item(id=1, name='IPHONE', price=2000, barcode='12345', description='brown product', owner=1)
-        purchase_info = User(id = 1, email_address='amanikashema@gmail.comu', password_hash="kash123", username='Amani',
+        purchase_info = User(id = 1, email_address='amanikashema@gmail.com', password_hash="kash123", username='Amani',
                              budget=3000).can_sell(item_info)
 
+    def test_buy_method(self):
+        user = User(id = 1, email_address='amanikashema@gmail.com', password_hash="kash123", username='Amani',
+                             budget=3000)
+        item = Item(id=1, name='phone', price=2000, barcode='12345', description='brown production', owner=1)
 
-        self.assertIn(purchase_info.username,item_info)
-        #item_obj in self.items
+        can_buy = item.buy(user)
+        db.session.commit()
+
+        self.assertIsNone(can_buy)
+
+    def test_item_repr_method(self):
+        item = Item(name='Phone', price=2000, barcode='testing', description='Model')
+
+        new_item = item.__repr__()
+
+        self.assertEqual(new_item, 'Item Phone')
 
 
-    def test_buy(self):
-        pass
 
-    def test_sell(self):
-        pass
+
 
 
 
