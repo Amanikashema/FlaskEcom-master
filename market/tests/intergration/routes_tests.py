@@ -5,11 +5,23 @@ from market import routes
 
 
 class TestRoutes(BaseTest):
+    def test_route(self):
+        with self.app:
+            response = self.app.get('/', follow_redirects=True)
+            self.assertEqual(response.status_code, 200)
+
     def test_home_route(self):
         with self.app:
             response = self.app.get('/home', follow_redirects=True)
             # tests status code from home page
             self.assertEqual(response.status_code, 200)
+
+    # function returns market route
+    def test_market_route(self):
+        with self.app:
+            response = self.app.get('/market', follow_redirects=True)
+            self.assertEqual(response.status_code, 200)
+            self.assertIn(b'Please Login', response.data)
 
     # function to test if user can buy item with enough money
     def test_market_route_enough_money(self):
