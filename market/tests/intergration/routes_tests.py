@@ -142,11 +142,9 @@ class TestRoutes(BaseTest):
 
     def test_login_valid(self):
         with self.app:
-            response = self.app.get('/login', follow_redirects=True)
+            response = self.app.get('/login', folloginlow_redirects=True)
             # tests status code of login page
             self.assertEqual(response.status_code, 200)
-            # test if returns login url
-            self.assertIn(request.url, 'http://localhost/login')
 
             self.app.post('/register',
                           data=dict(email_address='email@gmail.com', username='amani',
@@ -159,6 +157,27 @@ class TestRoutes(BaseTest):
                                                     ), follow_redirects=True)
 
             self.assertIn(b'Success! You are logged in as: amani', response_post.data)
+
+            # test if returns login url
+            self.assertIn(request.url, 'http://localhost/login')
+
+    # function to test if login route is returned
+    def test_login_route(self):
+        with self.app:
+            self.app.post('/register',
+                          data=dict(email_address='email@gmail.com', username='amani',
+                                    password1='pass1234',
+                                    password2='pass1234'), follow_redirects=True)
+
+            response_post = self.app.post('/login',
+                                          data=dict(email_address='email@gmail.com', username='amani',
+                                                    password='pass124',
+                                                    ), follow_redirects=True)
+
+            # tests status code of login page
+            self.assertEqual(response_post.status_code, 200)
+            # test if returns login url
+            self.assertIn(request.url, 'http://localhost/login')
 
     def test_login_invalid(self):
         with self.app:

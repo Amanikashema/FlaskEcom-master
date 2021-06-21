@@ -17,37 +17,39 @@ class TestRegister(BaseTest):
             self.assertEqual(response.status_code, 200)
             self.assertIn(request.url, 'http://localhost/register')
 
-    def test_valid_username(self):
+    def test_username_already_exist(self):
         with self.app:
-            self.app.post('/register',
-                          data=dict(email_address='email@gmail.com', username='amani', password1='pass1234',
-                                    password2='pass1234'), follow_redirects=True)
+            with self.app_context:
+                response1 = self.app.post('/register',
+                                          data=dict(username="amani", email_address="email@gmail.com",
+                                                    password1="pass1234", password2="pass1234", ), follow_redirects=True)
 
-        # Create an object because the form is expecting one from the post
-        class email():
-            data = 'test6'
+                user = db.session.query(User).filter_by(email_address="email@gmail.com").first()
+                self.assertTrue(user)
 
-        # use raise exception as context manager because it will store the caught exception in its exception attribute
-        with self.assertRaises(ValidationError) as context:
-            # call validate username method
-            RegisterForm().validate_username(email)
-            self.assertEqual('Email Address already exists! Please try a different email address',
-                             str(context.exception))
+                class Username():
+                    data = "amani"
 
-    def test_validate_email(self):
+                with self.assertRaises(ValidationError) as context:
+                    RegisterForm().validate_username(Username)
+                    self.assertEqual('Username already exists! Please try a different username', str(context.exception))
+
+    def test_email_already_exists(self):
         with self.app:
-            self.app.post('/register',
-                          data=dict(email_address='email@gmail.com', username='amani', password1='pass1234',
-                                    password2='pass1234'), follow_redirects=True)
+            with self.app_context:
+                response1 = self.app.post('/register',
+                                         data=dict(username="amani", email_address="email@gmail.com",
+                                                   password1="password1234", password2="password1234",), follow_redirects=True)
 
-            user = db.session.query(User).filter_by(email_address='email@gmail.com').first()
+                user = db.session.query(User).filter_by(email_address="email@gmail.com").first()
+                self.assertTrue(user)
 
-            # chek if email is in database
-            self.assertTrue(user)
+                class Email:
+                    data = "email@gmail.com"
 
-            validation_error = 'Email Address already exists! Please try a different email address'
-            # Test validation if username already exists
-            self.assertTrue(validation_error, 'Email Address already exists! Please try a different email address')
+                with self.assertRaises(ValidationError) as context:
+                    RegisterForm().validate_email_address(Email)
+                    self.assertEqual('Email Address already exists! Please try a different email address', str(context.exception))
 
     def test_user_registered(self):
         with self.app:
